@@ -1,14 +1,16 @@
 import numpy as np
 
 class game:
-    def __init__(self, size, cells, cycles):    #"cells" is an array of the coordinates of starting live cells
+    def __init__(self, size, cells, cycles, syl = (0,1)):    #"cells" is an array of the coordinates of starting live cells
         self.size = size
-        self.board = np.zeros((size,size), dtype=np.int8)
+        self.board = np.array([[syl[0] for i in range(size)]for i in range(size)])
         self.cycles = cycles
         self.cells = cells
+        self.syl = syl
         #add support for different symbols
+
         for i in self.cells:         #look into parallelizing this later; also consider if cells should be linkedlist
-            self.board[i[0]][i[1]] = 1
+            self.board[i[0]][i[1]] = syl[1]
     def run(self):              #keep dynamic list of cell neighbors_count instead of chekcing each time?
         print(self.board)
         while self.cycles > 0:
@@ -33,10 +35,10 @@ class game:
             #add new cells:
             for cell in maked:
                 self.cells.append(cell)
-                self.board[cell[0]][cell[1]] = 1
+                self.board[cell[0]][cell[1]] = self.syl[1]
             #remove marked cells:
             for cell in marked:
-                self.board[cell[0]][cell[1]] = 0
+                self.board[cell[0]][cell[1]] = self.syl[0]
                 self.cells.remove(cell)     #can be popped more efficiently
             print(self.board)
             self.cycles -= 1
@@ -46,7 +48,7 @@ class game:
         for i in directions:    #check in each direction if there is a neighbor
             x = (cell[0] + i[0], cell[1] + i[1])
             if self.inbounds(x):
-                if self.board[x[0]][x[1]] == 0:
+                if self.board[x[0]][x[1]] == self.syl[0]:
                     n.append(x)
         return n
     def neighbors_count(self, cell):    #check number of lives neighbors_count
@@ -55,12 +57,12 @@ class game:
         for i in directions:    #check in each direction if there is a neighbor
             x = (cell[0] + i[0], cell[1] + i[1])
             if self.inbounds(x):
-                if self.board[x[0]][x[1]] == 1:
+                if self.board[x[0]][x[1]] == self.syl[1]:
                     n += 1
         return n
     def inbounds(self, cell): #check if coord is in grid (later implement wrap around)
         return cell[0] >= 0 and cell[1] >= 0 and cell[0] < self.size and cell[1] < self.size
     
 
-x = game(20, [(3,2),(3,3),(3,4),(2,4),(1,3)], 30)
+x = game(10, [(3,2),(3,3),(3,4),(2,4),(1,3)], 30, ('|','-'))
 x.run()
