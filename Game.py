@@ -1,16 +1,19 @@
 import numpy as np
+
 class game:
     def __init__(self, size, cells, cycles):    #"cells" is an array of the coordinates of starting live cells
         self.size = size
-        self.board = np.zeros((size,size))
+        self.board = np.zeros((size,size), dtype=np.int8)
         self.cycles = cycles
         self.cells = cells
+        #add support for different symbols
         for i in self.cells:         #look into parallelizing this later; also consider if cells should be linkedlist
             self.board[i[0]][i[1]] = 1
     def run(self):              #keep dynamic list of cell neighbors_count instead of chekcing each time?
         print(self.board)
         while self.cycles > 0:
             marked = []
+            maked = []
             neighbors = set()
             #check through list of live cells instead of every grid square
             for cell in self.cells:
@@ -23,10 +26,14 @@ class game:
             #print(neighbors)
             for cell in neighbors:
                 #print(self.neighbors_count(cell))
+                #print(cell, self.neighbors_count(cell))
                 if self.neighbors_count(cell) == 3:
                     
-                    self.cells.append(cell)
-                    self.board[cell[0]][cell[1]] = 1
+                    maked.append(cell)
+            #add new cells:
+            for cell in maked:
+                self.cells.append(cell)
+                self.board[cell[0]][cell[1]] = 1
             #remove marked cells:
             for cell in marked:
                 self.board[cell[0]][cell[1]] = 0
@@ -55,5 +62,5 @@ class game:
         return cell[0] >= 0 and cell[1] >= 0 and cell[0] < self.size and cell[1] < self.size
     
 
-x = game(10, [(1,1),(1,2),(1,3),(1,4)], 15)
+x = game(20, [(3,2),(3,3),(3,4),(2,4),(1,3)], 30)
 x.run()
