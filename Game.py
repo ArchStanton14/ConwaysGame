@@ -50,22 +50,36 @@ class game:
         n = []
         for i in directions:    #check in each direction if there is a neighbor
             x = (cell[0] + i[0], cell[1] + i[1])
-            if self.inbounds(x):
-                if self.board[x[0]][x[1]] == self.syl[0]:
-                    n.append(x)
+            #if self.inbounds(x):
+            x = self.wrap(x)
+            if self.board[x[0]][x[1]] == self.syl[0]:
+                n.append(x)
         return n
     def neighbors_count(self, cell):    #check number of lives neighbors_count
         directions = [(-1, 0), (1, 0), (0, -1), (0,1),(-1,-1),(1,1),(-1,1),(1,-1)]
         n = 0
         for i in directions:    #check in each direction if there is a neighbor
             x = (cell[0] + i[0], cell[1] + i[1])
-            if self.inbounds(x):
-                if self.board[x[0]][x[1]] == self.syl[1]:
-                    n += 1
+            #if self.inbounds(x):
+            x = self.wrap(x)
+            if self.board[x[0]][x[1]] == self.syl[1]:
+                n += 1
         return n
     def inbounds(self, cell): #check if coord is in grid (later implement wrap around)
         return cell[0] >= 0 and cell[1] >= 0 and cell[0] < self.size and cell[1] < self.size
-    
+    def wrap(self, cell): #wrap around behavior. Desn't have to be complicated because we're only interested in steps of 1
+        #tuples are immutable
+        n = cell
+        if cell[0] < 0:
+            n = (self.size-1, n[1])
+        if cell[1] < 0:
+            n = (n[0], self.size-1)
+        if cell[0] >= self.size:
+            n = (0, n[1])
+        if cell[1] >= self.size:
+            n = (n[0], 0)
+        return n
 
-x = game(30, [(3,2),(3,3),(3,4),(2,4),(1,3)], 50, (' |',' _'))
+
+x = game(10, [(3,2),(3,3),(3,4),(2,4),(1,3)], 5000, (' |',' _'))
 x.run()
