@@ -40,7 +40,10 @@ class game:
             for cell in marked:
                 self.board[cell[0]][cell[1]] = self.syl[0]
                 self.cells.remove(cell)     #can be popped more efficiently
-            print(self.board)
+            for line in self.board:
+                print("".join(line))
+            #print(self.board)
+            print("\n")
             self.cycles -= 1
     def empty_neighbors(self, cell):    #check number of lives neighbors_count
         directions = [(-1, 0), (1, 0), (0, -1), (0,1),(-1,-1),(1,1),(-1,1),(1,-1)]
@@ -64,5 +67,5 @@ class game:
         return cell[0] >= 0 and cell[1] >= 0 and cell[0] < self.size and cell[1] < self.size
     
 
-x = game(10, [(3,2),(3,3),(3,4),(2,4),(1,3)], 30, ('|','-'))
+x = game(30, [(3,2),(3,3),(3,4),(2,4),(1,3)], 50, (' |',' _'))
 x.run()
