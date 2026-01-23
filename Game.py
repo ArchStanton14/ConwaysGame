@@ -4,12 +4,13 @@ import time
 
 
 class game:
-    def __init__(self, size, cells, cycles, syl = (0,1)):    #"cells" is an array of the coordinates of starting live cells
+    def __init__(self, size, cells, cycles, syl = (0,1), wrap = 1):    #"cells" is an array of the coordinates of starting live cells
         self.size = size
         self.board = np.array([[syl[0] for i in range(size)]for i in range(size)])
         self.cycles = cycles
         self.cells = cells
         self.syl = syl
+        self.wrap = wrap
         #add support for different symbols
 
         for i in self.cells:         #look into parallelizing this later; also consider if cells should be linkedlist
@@ -67,10 +68,16 @@ class game:
         n = []
         for i in directions:    #check in each direction if there is a neighbor
             x = (cell[0] + i[0], cell[1] + i[1])
+
             #if self.inbounds(x):
-            x = self.wrap(x)
-            if self.board[x[0]][x[1]] == self.syl[0]:
-                n.append(x)
+            if self.wrap:
+                x = self.wrapAround(x)
+                if self.board[x[0]][x[1]] == self.syl[0]:
+                    n.append(x)
+            else:
+                if self.inbounds(x):
+                    if self.board[x[0]][x[1]] == self.syl[0]:
+                        n.append(x)
         return n
     def neighbors_count(self, cell):    #check number of lives neighbors_count
         directions = [(-1, 0), (1, 0), (0, -1), (0,1),(-1,-1),(1,1),(-1,1),(1,-1)]
@@ -78,13 +85,19 @@ class game:
         for i in directions:    #check in each direction if there is a neighbor
             x = (cell[0] + i[0], cell[1] + i[1])
             #if self.inbounds(x):
-            x = self.wrap(x)
-            if self.board[x[0]][x[1]] == self.syl[1]:
-                n += 1
+            if self.wrap:
+                x = self.wrapAround(x)
+                if self.board[x[0]][x[1]] == self.syl[1]:
+                    n += 1
+            else:
+                if self.inbounds(x):
+                    if self.board[x[0]][x[1]] == self.syl[1]:
+                        n += 1
+
         return n
     def inbounds(self, cell): #check if coord is in grid (later implement wrap around)
         return cell[0] >= 0 and cell[1] >= 0 and cell[0] < self.size and cell[1] < self.size
-    def wrap(self, cell): #wrap around behavior. Desn't have to be complicated because we're only interested in steps of 1
+    def wrapAround(self, cell): #wrap around behavior. Desn't have to be complicated because we're only interested in steps of 1
         #tuples are immutable
         n = cell
         if cell[0] < 0:
@@ -99,5 +112,5 @@ class game:
 
 
 #x = game(80, [(3,2),(3,3),(3,4),(2,4),(1,3), (8,2),(8,3),(8,4),(7,2),(6,3), (20,10), (20,11), (20,12)], 5000, (' |',' _'))
-x = game(60, [(30,30), (30,31), (28,31),(29,33),(30,34),(30,35),(30,36)], 2220, (' |',' _'))
+x = game(60, [(30,30), (30,31), (28,31),(29,33),(30,34),(30,35),(30,36)], 2220, (' |',' _'), wrap=0)
 x.run(debug=0, speed=20)
