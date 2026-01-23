@@ -15,7 +15,11 @@ class game:
         for i in self.cells:         #look into parallelizing this later; also consider if cells should be linkedlist
             self.board[i[0]][i[1]] = syl[1]
     def run(self, speed, debug):              #keep dynamic list of cell neighbors_count instead of chekcing each time?
-        print(self.board)
+        os.system('cls' if os.name == 'nt' else 'clear')    #from StackOverflow; clear command is system specific, this should work on windows and unix
+        #print starting board
+        for line in self.board:
+                print("".join(line))
+        
         while self.cycles > 0:
             marked = []
             maked = []
@@ -43,13 +47,17 @@ class game:
             for cell in marked:
                 self.board[cell[0]][cell[1]] = self.syl[0]
                 self.cells.remove(cell)     #can be popped more efficiently
-            for line in self.board:
-                print("".join(line))
+            
             #print(self.board)
             if not debug:
                 time.sleep(1/speed)
 
-                os.system('cls' if os.name == 'nt' else 'clear')    #from StackOverflow; clear command is system specific, this should work on windows and unix
+                os.system('tput cup 0 0')
+                out = ""
+                for line in self.board:
+                    #join everything, print it all in one go so we can overwrite correctly, but this doesn;t work for some reason. This should avoid screen flashing associatd with the clear command
+                    out+= "".join(line) + '\n'
+                print (out)
             else:
 
                 print("\n")
@@ -90,5 +98,6 @@ class game:
         return n
 
 
-x = game(50, [(3,2),(3,3),(3,4),(2,4),(1,3), (8,2),(8,3),(8,4),(7,2),(6,3), (20,10), (20,11), (20,12)], 5000, (' |',' _'))
-x.run(debug=0, speed=100)
+#x = game(80, [(3,2),(3,3),(3,4),(2,4),(1,3), (8,2),(8,3),(8,4),(7,2),(6,3), (20,10), (20,11), (20,12)], 5000, (' |',' _'))
+x = game(60, [(30,30), (30,31), (28,31),(29,33),(30,34),(30,35),(30,36)], 2220, (' |',' _'))
+x.run(debug=0, speed=20)
