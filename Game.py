@@ -1,4 +1,7 @@
 import numpy as np
+import os
+import time
+
 
 class game:
     def __init__(self, size, cells, cycles, syl = (0,1)):    #"cells" is an array of the coordinates of starting live cells
@@ -11,7 +14,7 @@ class game:
 
         for i in self.cells:         #look into parallelizing this later; also consider if cells should be linkedlist
             self.board[i[0]][i[1]] = syl[1]
-    def run(self):              #keep dynamic list of cell neighbors_count instead of chekcing each time?
+    def run(self, speed, debug):              #keep dynamic list of cell neighbors_count instead of chekcing each time?
         print(self.board)
         while self.cycles > 0:
             marked = []
@@ -43,7 +46,13 @@ class game:
             for line in self.board:
                 print("".join(line))
             #print(self.board)
-            print("\n")
+            if not debug:
+                time.sleep(1/speed)
+
+                os.system('cls' if os.name == 'nt' else 'clear')    #from StackOverflow; clear command is system specific, this should work on windows and unix
+            else:
+
+                print("\n")
             self.cycles -= 1
     def empty_neighbors(self, cell):    #check number of lives neighbors_count
         directions = [(-1, 0), (1, 0), (0, -1), (0,1),(-1,-1),(1,1),(-1,1),(1,-1)]
@@ -81,5 +90,5 @@ class game:
         return n
 
 
-x = game(10, [(3,2),(3,3),(3,4),(2,4),(1,3)], 5000, (' |',' _'))
-x.run()
+x = game(50, [(3,2),(3,3),(3,4),(2,4),(1,3), (8,2),(8,3),(8,4),(7,2),(6,3), (20,10), (20,11), (20,12)], 5000, (' |',' _'))
+x.run(debug=0, speed=100)
